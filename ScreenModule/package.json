@@ -1,0 +1,21 @@
+{
+    "name": "com.strada.modules.screen",
+    "version": "1.0.0",
+    "displayName": "Strada Screen Module",
+    "description": "Screen/UI management module for Strada framework with safe area, history, and flexible animations",
+    "unity": "2021.3",
+    "dependencies": {
+        "com.strada.core": "1.0.0",
+        "com.unity.addressables": "1.19.0"
+    },
+    "keywords": [
+        "strada",
+        "ui",
+        "screen",
+        "navigation",
+        "addressables"
+    ],
+    "author": {
+        "name": "Strada Framework"
+    }
+}

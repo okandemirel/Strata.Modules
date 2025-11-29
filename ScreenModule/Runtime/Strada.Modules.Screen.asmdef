@@ -1,0 +1,18 @@
+{
+    "name": "Strada.Modules.Screen",
+    "rootNamespace": "Strada.Modules.Screen",
+    "references": [
+        "Strada.Core",
+        "Unity.Addressables",
+        "Unity.ResourceManager"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

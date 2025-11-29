@@ -1,0 +1,19 @@
+{
+    "name": "Strada.Modules.Screen.Editor",
+    "rootNamespace": "Strada.Modules.Screen.Editor",
+    "references": [
+        "Strada.Modules.Screen",
+        "Strada.Core"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
