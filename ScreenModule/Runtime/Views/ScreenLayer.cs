@@ -10,12 +10,12 @@ namespace Strada.Modules.Screen
     public class ScreenLayer : MonoBehaviour, IScreenLayer
     {
         [Tooltip("Whether to apply safe area adjustments to screens on this layer")]
-        [SerializeField] private bool _applySafeArea = false;
+        [SerializeField] private bool applySafeArea = false;
 
         private RectTransform _rectTransform;
 
         /// <inheritdoc/>
-        public bool ApplySafeArea => _applySafeArea;
+        public bool ApplySafeArea => applySafeArea;
 
         /// <inheritdoc/>
         public RectTransform RectTransform

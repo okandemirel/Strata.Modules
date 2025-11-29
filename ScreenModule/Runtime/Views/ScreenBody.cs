@@ -12,7 +12,7 @@ namespace Strada.Modules.Screen
     {
         [Header("Animation")]
         [Tooltip("Optional Unity Animator for animations")]
-        [SerializeField] private Animator _animator;
+        [SerializeField] private Animator animator;
 
         private RectTransform _rectTransform;
         private ScreenData _data;
@@ -79,9 +79,9 @@ namespace Strada.Modules.Screen
             {
                 CustomAnimator.PlayShow(this, OnShowComplete);
             }
-            else if (_animator != null)
+            else if (animator != null)
             {
-                _animator.SetTrigger("Show");
+                animator.SetTrigger("Show");
             }
             else
             {
@@ -104,9 +104,9 @@ namespace Strada.Modules.Screen
             {
                 CustomAnimator.PlayHide(this, OnHideComplete);
             }
-            else if (_animator != null)
+            else if (animator != null)
             {
-                _animator.SetTrigger("Hide");
+                animator.SetTrigger("Hide");
             }
             else
             {

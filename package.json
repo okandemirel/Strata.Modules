@@ -1,0 +1,20 @@
+{
+  "name": "com.strada.modules",
+  "version": "1.0.0",
+  "displayName": "Strada Modules",
+  "description": "Collection of modules for the Strada framework including Screen Management, and more.",
+  "unity": "6000.0",
+  "dependencies": {
+    "com.strada.core": "1.0.0",
+    "com.unity.addressables": "1.19.0"
+  },
+  "keywords": [
+    "strada",
+    "modules",
+    "screen",
+    "ui"
+  ],
+  "author": {
+    "name": "Strada"
+  }
+}

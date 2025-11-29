@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Strada.Modules.Screen
 {
@@ -12,15 +13,15 @@ namespace Strada.Modules.Screen
     {
         [Header("Manager Settings")]
         [Tooltip("Unique identifier for this manager")]
-        [SerializeField] private int _managerId = 0;
+        [SerializeField] private int managerId = 0;
 
         [Header("Layers")]
         [Tooltip("Screen layers managed by this manager (order matters)")]
-        [SerializeField] private List<ScreenLayer> _layers = new();
+        [SerializeField] private List<ScreenLayer> layers = new();
 
         [Header("Screen Configurations")]
         [Tooltip("Screen configurations registered with this manager")]
-        [SerializeField] private List<ScreenConfig> _configs = new();
+        [SerializeField] private List<ScreenConfig> configs = new();
 
         /// <summary>
         /// Event raised when this manager is registered.
@@ -35,17 +36,17 @@ namespace Strada.Modules.Screen
         /// <summary>
         /// The unique ID of this manager.
         /// </summary>
-        public int ManagerId => _managerId;
+        public int ManagerId => managerId;
 
         /// <summary>
         /// The layers managed by this manager.
         /// </summary>
-        public IReadOnlyList<ScreenLayer> Layers => _layers;
+        public IReadOnlyList<ScreenLayer> Layers => layers;
 
         /// <summary>
         /// The screen configurations registered with this manager.
         /// </summary>
-        public IReadOnlyList<ScreenConfig> Configs => _configs;
+        public IReadOnlyList<ScreenConfig> Configs => configs;
 
         private void Awake()
         {
@@ -82,15 +83,15 @@ namespace Strada.Modules.Screen
         /// <returns>The layer, or null if index is invalid.</returns>
         public ScreenLayer GetLayer(int index)
         {
-            if (index < 0 || index >= _layers.Count)
+            if (index < 0 || index >= layers.Count)
                 return null;
-            return _layers[index];
+            return layers[index];
         }
 
         /// <summary>
         /// Gets the number of layers.
         /// </summary>
-        public int LayerCount => _layers.Count;
+        public int LayerCount => layers.Count;
 
         /// <summary>
         /// Adds a layer at runtime.
@@ -98,9 +99,9 @@ namespace Strada.Modules.Screen
         /// <param name="layer">The layer to add.</param>
         public void AddLayer(ScreenLayer layer)
         {
-            if (layer != null && !_layers.Contains(layer))
+            if (layer != null && !layers.Contains(layer))
             {
-                _layers.Add(layer);
+                layers.Add(layer);
             }
         }
 
@@ -110,16 +111,16 @@ namespace Strada.Modules.Screen
         /// <param name="config">The configuration to add.</param>
         public void AddConfig(ScreenConfig config)
         {
-            if (config != null && !_configs.Contains(config))
+            if (config != null && !configs.Contains(config))
             {
-                _configs.Add(config);
+                configs.Add(config);
             }
         }
 
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            foreach (var config in _configs)
+            foreach (var config in configs)
             {
                 if (config != null)
                 {

@@ -26,16 +26,16 @@ namespace Strada.Modules.Screen.Editor
 
         private void OnEnable()
         {
-            _screenTypeName = serializedObject.FindProperty("_screenTypeName");
-            _loadType = serializedObject.FindProperty("_loadType");
-            _prefab = serializedObject.FindProperty("_prefab");
-            _resourcePath = serializedObject.FindProperty("_resourcePath");
-            _addressableKey = serializedObject.FindProperty("_addressableKey");
-            _defaultLayerIndex = serializedObject.FindProperty("_defaultLayerIndex");
-            _tag = serializedObject.FindProperty("_tag");
-            _poolable = serializedObject.FindProperty("_poolable");
-            _poolSize = serializedObject.FindProperty("_poolSize");
-            _addToHistory = serializedObject.FindProperty("_addToHistory");
+            _screenTypeName = serializedObject.FindProperty("screenTypeName");
+            _loadType = serializedObject.FindProperty("loadType");
+            _prefab = serializedObject.FindProperty("prefab");
+            _resourcePath = serializedObject.FindProperty("resourcePath");
+            _addressableKey = serializedObject.FindProperty("addressableKey");
+            _defaultLayerIndex = serializedObject.FindProperty("defaultLayerIndex");
+            _tag = serializedObject.FindProperty("tag");
+            _poolable = serializedObject.FindProperty("poolable");
+            _poolSize = serializedObject.FindProperty("poolSize");
+            _addToHistory = serializedObject.FindProperty("addToHistory");
         }
 
         public override void OnInspectorGUI()

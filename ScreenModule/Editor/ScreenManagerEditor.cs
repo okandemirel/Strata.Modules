@@ -14,21 +14,16 @@ namespace Strada.Modules.Screen.Editor
         private SerializedProperty _managerId;
         private SerializedProperty _layers;
         private SerializedProperty _configs;
-        private SerializedProperty _registerOnAwake;
-        private SerializedProperty _unregisterOnDestroy;
 
         private bool _showLayers = true;
         private bool _showConfigs = true;
-        private bool _showSettings = true;
         private Vector2 _configScrollPosition;
 
         private void OnEnable()
         {
-            _managerId = serializedObject.FindProperty("_managerId");
-            _layers = serializedObject.FindProperty("_layers");
-            _configs = serializedObject.FindProperty("_configs");
-            _registerOnAwake = serializedObject.FindProperty("_registerOnAwake");
-            _unregisterOnDestroy = serializedObject.FindProperty("_unregisterOnDestroy");
+            _managerId = serializedObject.FindProperty("managerId");
+            _layers = serializedObject.FindProperty("layers");
+            _configs = serializedObject.FindProperty("configs");
         }
 
         public override void OnInspectorGUI()
@@ -39,7 +34,6 @@ namespace Strada.Modules.Screen.Editor
 
             DrawHeader(manager);
             DrawManagerId();
-            DrawSettingsSection();
             DrawLayersSection(manager);
             DrawConfigsSection();
             DrawRuntimeInfo(manager);
@@ -73,27 +67,6 @@ namespace Strada.Modules.Screen.Editor
             EditorGUILayout.PropertyField(_managerId, new GUIContent("Manager ID",
                 "Unique identifier for this screen manager. Use different IDs for multiple managers."));
             EditorGUILayout.EndVertical();
-            EditorGUILayout.Space(5);
-        }
-
-        private void DrawSettingsSection()
-        {
-            _showSettings = EditorGUILayout.BeginFoldoutHeaderGroup(_showSettings, "Settings");
-
-            if (_showSettings)
-            {
-                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-
-                EditorGUILayout.PropertyField(_registerOnAwake, new GUIContent("Register On Awake",
-                    "Automatically register this manager when Awake is called."));
-
-                EditorGUILayout.PropertyField(_unregisterOnDestroy, new GUIContent("Unregister On Destroy",
-                    "Automatically unregister this manager when destroyed."));
-
-                EditorGUILayout.EndVertical();
-            }
-
-            EditorGUILayout.EndFoldoutHeaderGroup();
             EditorGUILayout.Space(5);
         }
 
@@ -266,7 +239,6 @@ namespace Strada.Modules.Screen.Editor
                 }
             }
 
-            // Check for null configs
             for (int i = 0; i < _configs.arraySize; i++)
             {
                 var configProp = _configs.GetArrayElementAtIndex(i);
@@ -276,7 +248,6 @@ namespace Strada.Modules.Screen.Editor
                 }
             }
 
-            // Check for duplicate configs
             var seenTypes = new HashSet<string>();
             for (int i = 0; i < _configs.arraySize; i++)
             {

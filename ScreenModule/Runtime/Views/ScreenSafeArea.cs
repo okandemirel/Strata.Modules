@@ -12,10 +12,10 @@ namespace Strada.Modules.Screen
     {
         [Header("Safe Area Settings")]
         [Tooltip("Layers that should have safe area applied")]
-        [SerializeField] private List<ScreenLayer> _safeLayers = new();
+        [SerializeField] private List<ScreenLayer> safeLayers = new();
 
         [Tooltip("Apply safe area on start")]
-        [SerializeField] private bool _applyOnStart = true;
+        [SerializeField] private bool applyOnStart = true;
 
         private Rect _lastSafeArea;
         private ScreenOrientation _lastOrientation;
@@ -23,7 +23,7 @@ namespace Strada.Modules.Screen
 
         private void Start()
         {
-            if (_applyOnStart)
+            if (applyOnStart)
             {
                 ForceApplySafeArea();
             }
@@ -67,7 +67,7 @@ namespace Strada.Modules.Screen
             _lastOrientation = UnityEngine.Screen.orientation;
             _lastResolution = new Vector2Int(UnityEngine.Screen.width, UnityEngine.Screen.height);
 
-            foreach (var layer in _safeLayers.Where(l => l != null && l.ApplySafeArea))
+            foreach (var layer in safeLayers.Where(l => l != null && l.ApplySafeArea))
             {
                 ApplyToLayer(layer, _lastSafeArea);
             }
@@ -113,9 +113,9 @@ namespace Strada.Modules.Screen
         /// <param name="layer">The layer to add.</param>
         public void AddLayer(ScreenLayer layer)
         {
-            if (layer != null && !_safeLayers.Contains(layer))
+            if (layer != null && !safeLayers.Contains(layer))
             {
-                _safeLayers.Add(layer);
+                safeLayers.Add(layer);
                 if (layer.ApplySafeArea)
                 {
                     ApplyToLayer(layer, _lastSafeArea);
@@ -129,7 +129,7 @@ namespace Strada.Modules.Screen
         /// <param name="layer">The layer to remove.</param>
         public void RemoveLayer(ScreenLayer layer)
         {
-            _safeLayers.Remove(layer);
+            safeLayers.Remove(layer);
         }
 
         /// <summary>
@@ -140,6 +140,6 @@ namespace Strada.Modules.Screen
         /// <summary>
         /// Gets the list of managed layers.
         /// </summary>
-        public IReadOnlyList<ScreenLayer> SafeLayers => _safeLayers;
+        public IReadOnlyList<ScreenLayer> SafeLayers => safeLayers;
     }
 }

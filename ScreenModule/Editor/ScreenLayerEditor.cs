@@ -9,15 +9,11 @@ namespace Strada.Modules.Screen.Editor
     [CustomEditor(typeof(ScreenLayer))]
     public class ScreenLayerEditor : UnityEditor.Editor
     {
-        private SerializedProperty _layerIndex;
         private SerializedProperty _applySafeArea;
-        private SerializedProperty _clearOnManagerUnregister;
 
         private void OnEnable()
         {
-            _layerIndex = serializedObject.FindProperty("_layerIndex");
-            _applySafeArea = serializedObject.FindProperty("_applySafeArea");
-            _clearOnManagerUnregister = serializedObject.FindProperty("_clearOnManagerUnregister");
+            _applySafeArea = serializedObject.FindProperty("applySafeArea");
         }
 
         public override void OnInspectorGUI()
@@ -44,14 +40,8 @@ namespace Strada.Modules.Screen.Editor
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
-            EditorGUILayout.PropertyField(_layerIndex, new GUIContent("Layer Index",
-                "The order index of this layer. Lower values are rendered behind higher values."));
-
             EditorGUILayout.PropertyField(_applySafeArea, new GUIContent("Apply Safe Area",
                 "Whether this layer should respect device safe area boundaries."));
-
-            EditorGUILayout.PropertyField(_clearOnManagerUnregister, new GUIContent("Clear On Unregister",
-                "Whether to clear all screens in this layer when the manager is unregistered."));
 
             EditorGUILayout.EndVertical();
         }
@@ -65,7 +55,7 @@ namespace Strada.Modules.Screen.Editor
             EditorGUILayout.LabelField("Runtime Info", EditorStyles.miniBoldLabel);
 
             EditorGUI.BeginDisabledGroup(true);
-            EditorGUILayout.IntField("Screen Count", layer.ScreenCount);
+            EditorGUILayout.IntField("Child Count", layer.Transform.childCount);
 
             if (layer.RectTransform != null)
             {
