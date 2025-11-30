@@ -212,7 +212,10 @@ namespace Strada.Modules.Screen.Editor
 
             foreach (var m in managers)
             {
-                var prop = new SerializedObject(m).FindProperty("_managerId");
+                var so = new SerializedObject(m);
+                var prop = so.FindProperty("managerId");
+                if (prop == null) continue;
+
                 var id = prop.intValue;
 
                 if (!idCounts.ContainsKey(id))

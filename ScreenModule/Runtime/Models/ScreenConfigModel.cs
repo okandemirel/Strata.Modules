@@ -9,20 +9,16 @@ namespace Strada.Modules.Screen
     /// </summary>
     public class ScreenConfigModel : Model, IScreenConfigModel
     {
-        // Manager ID -> ScreenManagerData
         private readonly Dictionary<int, ScreenManagerData> _managers = new();
 
-        // Config -> Loaded screen instance
         private readonly Dictionary<ScreenConfig, IScreenBody> _loadedScreens = new();
 
-        // Tag -> List of configs with that tag
         private readonly Dictionary<ScreenTag, List<ScreenConfig>> _tagIndex = new();
 
         protected override void OnInitialize()
         {
             base.OnInitialize();
 
-            // Initialize tag index
             foreach (ScreenTag tag in Enum.GetValues(typeof(ScreenTag)))
             {
                 _tagIndex[tag] = new List<ScreenConfig>();
@@ -53,7 +49,6 @@ namespace Strada.Modules.Screen
         {
             if (_managers.TryGetValue(managerId, out var manager))
             {
-                // Remove all configs for this manager from tag index
                 foreach (var config in manager.Configs.Values)
                 {
                     _tagIndex[config.Tag].Remove(config);
@@ -93,13 +88,11 @@ namespace Strada.Modules.Screen
 
             manager.Configs[screenType] = config;
 
-            // Add to tag index
             if (!_tagIndex[config.Tag].Contains(config))
             {
                 _tagIndex[config.Tag].Add(config);
             }
 
-            // Resolve type if not already done
             config.ResolveType();
         }
 

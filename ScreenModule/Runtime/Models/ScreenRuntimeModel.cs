@@ -10,26 +10,20 @@ namespace Strada.Modules.Screen
     /// </summary>
     public class ScreenRuntimeModel : Model, IScreenRuntimeModel
     {
-        // Passive pool: ScreenType -> List of pooled screens
         private readonly Dictionary<Type, List<IScreenBody>> _passivePool = new();
 
-        // Active screens by manager: ManagerId -> (ScreenType -> Screen)
         private readonly Dictionary<int, Dictionary<Type, IScreenBody>> _activeByManager = new();
 
-        // Active screens by layer: ManagerId -> (LayerIndex -> Screen)
         private readonly Dictionary<int, Dictionary<int, IScreenBody>> _activeByLayer = new();
 
-        // Active screens by tag: ManagerId -> (Tag -> List of screens)
         private readonly Dictionary<int, Dictionary<ScreenTag, List<IScreenBody>>> _activeByTag = new();
 
-        // Parent transform for pooled screens
         private Transform _poolParent;
 
         protected override void OnInitialize()
         {
             base.OnInitialize();
 
-            // Create pool parent
             var poolObject = new GameObject("[ScreenModule] Pool");
             UnityEngine.Object.DontDestroyOnLoad(poolObject);
             poolObject.SetActive(false);
@@ -70,7 +64,6 @@ namespace Strada.Modules.Screen
                 screen.AddState(ScreenState.InPool);
                 screen.RemoveState(ScreenState.InUse);
 
-                // Parent to pool
                 if (screen.GameObject != null && _poolParent != null)
                 {
                     screen.GameObject.transform.SetParent(_poolParent, false);
@@ -140,7 +133,6 @@ namespace Strada.Modules.Screen
             var layerIndex = data.LayerIndex;
             var tag = data.Tag;
 
-            // By manager + type
             if (!_activeByManager.TryGetValue(managerId, out var managerDict))
             {
                 managerDict = new Dictionary<Type, IScreenBody>();
@@ -148,7 +140,6 @@ namespace Strada.Modules.Screen
             }
             managerDict[screenType] = screen;
 
-            // By layer
             if (!_activeByLayer.TryGetValue(managerId, out var layerDict))
             {
                 layerDict = new Dictionary<int, IScreenBody>();
@@ -156,7 +147,6 @@ namespace Strada.Modules.Screen
             }
             layerDict[layerIndex] = screen;
 
-            // By tag
             if (!_activeByTag.TryGetValue(managerId, out var tagDict))
             {
                 tagDict = new Dictionary<ScreenTag, List<IScreenBody>>();
@@ -186,13 +176,11 @@ namespace Strada.Modules.Screen
             var layerIndex = data.LayerIndex;
             var tag = data.Tag;
 
-            // Remove from manager dict
             if (_activeByManager.TryGetValue(managerId, out var managerDict))
             {
                 managerDict.Remove(screenType);
             }
 
-            // Remove from layer dict
             if (_activeByLayer.TryGetValue(managerId, out var layerDict))
             {
                 if (layerDict.TryGetValue(layerIndex, out var layerScreen) && layerScreen == screen)
@@ -201,7 +189,6 @@ namespace Strada.Modules.Screen
                 }
             }
 
-            // Remove from tag list
             if (_activeByTag.TryGetValue(managerId, out var tagDict))
             {
                 if (tagDict.TryGetValue(tag, out var tagList))
@@ -305,7 +292,6 @@ namespace Strada.Modules.Screen
 
         public void ClearAll()
         {
-            // Destroy all pooled screens
             foreach (var list in _passivePool.Values)
             {
                 foreach (var screen in list)
@@ -319,7 +305,6 @@ namespace Strada.Modules.Screen
             }
             _passivePool.Clear();
 
-            // Clear active pools (don't destroy - they might be in use)
             _activeByManager.Clear();
             _activeByLayer.Clear();
             foreach (var tagDict in _activeByTag.Values)

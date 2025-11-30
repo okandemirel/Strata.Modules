@@ -31,57 +31,45 @@ namespace Strada.Modules.Screen
             var managerId = screenData.ManagerId;
             var screenType = screenData.ScreenType;
             var layerIndex = screenData.LayerIndex;
-            var forceOpen = true; // Force open is handled by the caller
+            var forceOpen = true;
 
-            // Get config
             var config = _configModel.GetConfig(managerId, screenType);
             if (config == null)
                 throw new InvalidOperationException($"No config found for screen type {screenType.Name} on manager {managerId}");
 
-            // Update data from config
             config.CopyToData(screenData);
 
-            // Check if layer is occupied
             if (_runtimeModel.IsLayerOccupied(layerIndex, managerId, out var occupant))
             {
-                // Hide the occupant first
                 await _hideService.HideScreenAsync(occupant, immediate: true);
             }
 
-            // Try to get from pool
             IScreenBody screen;
             if (_runtimeModel.TryGetFromPool(screenType, out screen))
             {
-                // Reuse pooled screen
                 screen.Data = screenData;
             }
             else
             {
-                // Load new screen
                 screen = await _loadService.LoadScreenAsync(config);
                 screen.Data = screenData;
                 _runtimeModel.RemoveFromPassivePool(screen);
             }
 
-            // Setup screen
             _setupService.SetupScreen(screen);
 
-            // Pass parameters
             if (screenData.Parameters != null && screenData.Parameters.Length > 0)
             {
                 screen.SetParameters(screenData.Parameters);
             }
 
-            // Add to active pools
             _runtimeModel.AddToActive(screen);
 
-            // Add to history if requested
             if (screenData.AddToHistory)
             {
                 _historyService.Push(screen);
             }
 
-            // Show screen
             var showTcs = new TaskCompletionSource<bool>();
 
             screen.OnShowAnimationComplete = s =>
@@ -91,7 +79,6 @@ namespace Strada.Modules.Screen
 
             screen.Show();
 
-            // Wait for show animation if applicable
             if (screenData.HasShowAnimation)
             {
                 await showTcs.Task;

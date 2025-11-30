@@ -5,7 +5,7 @@ using Strada.Core.Patterns;
 namespace Strada.Modules.Screen
 {
     /// <summary>
-    /// Service for screen validation checks.
+    /// Service for screen validation and checking.
     /// </summary>
     public class ScreenCheckService : Service
     {
@@ -61,7 +61,6 @@ namespace Strada.Modules.Screen
         {
             error = null;
 
-            // Check if manager exists
             var manager = _configModel.GetManager(managerId);
             if (manager == null)
             {
@@ -69,21 +68,18 @@ namespace Strada.Modules.Screen
                 return false;
             }
 
-            // Check if layer is valid
             if (!manager.IsValidLayerIndex(layerIndex))
             {
                 error = $"Layer index {layerIndex} is invalid for manager {managerId}";
                 return false;
             }
 
-            // Check for duplicates
             if (IsScreenDuplicate(screenType, managerId, out _))
             {
                 error = $"Screen {screenType.Name} is already active on manager {managerId}";
                 return false;
             }
 
-            // Check if layer is full (unless force open)
             if (!forceOpen && IsLayerFull(layerIndex, managerId, out _))
             {
                 error = $"Layer {layerIndex} is already occupied on manager {managerId}";
@@ -114,11 +110,9 @@ namespace Strada.Modules.Screen
             if (screen == null)
                 return false;
 
-            // Can't show if already in use
             if (screen.HasState(ScreenState.InUse))
                 return false;
 
-            // Can't show if loading or unloading
             if (screen.HasState(ScreenState.Loading) || screen.HasState(ScreenState.Unloading))
                 return false;
 
@@ -135,11 +129,9 @@ namespace Strada.Modules.Screen
             if (screen == null)
                 return false;
 
-            // Must be in use to hide
             if (!screen.HasState(ScreenState.InUse))
                 return false;
 
-            // Can't hide if already in hide animation or unloading
             if (screen.HasState(ScreenState.InHideAnimation) || screen.HasState(ScreenState.Unloading))
                 return false;
 

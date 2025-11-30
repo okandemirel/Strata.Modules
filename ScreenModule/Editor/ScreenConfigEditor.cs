@@ -28,10 +28,10 @@ namespace Strada.Modules.Screen.Editor
         {
             _screenTypeName = serializedObject.FindProperty("screenTypeName");
             _loadType = serializedObject.FindProperty("loadType");
-            _prefab = serializedObject.FindProperty("prefab");
+            _prefab = serializedObject.FindProperty("directPrefab");
             _resourcePath = serializedObject.FindProperty("resourcePath");
             _addressableKey = serializedObject.FindProperty("addressableKey");
-            _defaultLayerIndex = serializedObject.FindProperty("defaultLayerIndex");
+            _defaultLayerIndex = serializedObject.FindProperty("defaultLayer");
             _tag = serializedObject.FindProperty("tag");
             _poolable = serializedObject.FindProperty("poolable");
             _poolSize = serializedObject.FindProperty("poolSize");
@@ -87,6 +87,13 @@ namespace Strada.Modules.Screen.Editor
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             EditorGUILayout.LabelField("Loading", EditorStyles.miniBoldLabel);
 
+            if (_loadType == null)
+            {
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.Space(5);
+                return;
+            }
+
             EditorGUILayout.PropertyField(_loadType, new GUIContent("Load Type"));
 
             var loadType = (ScreenLoadType)_loadType.enumValueIndex;
@@ -94,26 +101,35 @@ namespace Strada.Modules.Screen.Editor
             switch (loadType)
             {
                 case ScreenLoadType.DirectPrefab:
-                    EditorGUILayout.PropertyField(_prefab, new GUIContent("Prefab"));
-                    if (_prefab.objectReferenceValue == null)
+                    if (_prefab != null)
                     {
-                        EditorGUILayout.HelpBox("Assign a prefab to use Direct Prefab loading.", MessageType.Warning);
+                        EditorGUILayout.PropertyField(_prefab, new GUIContent("Prefab"));
+                        if (_prefab.objectReferenceValue == null)
+                        {
+                            EditorGUILayout.HelpBox("Assign a prefab to use Direct Prefab loading.", MessageType.Warning);
+                        }
                     }
                     break;
 
                 case ScreenLoadType.Resource:
-                    EditorGUILayout.PropertyField(_resourcePath, new GUIContent("Resource Path"));
-                    if (string.IsNullOrEmpty(_resourcePath.stringValue))
+                    if (_resourcePath != null)
                     {
-                        EditorGUILayout.HelpBox("Enter a Resources path (without 'Resources/' prefix).", MessageType.Warning);
+                        EditorGUILayout.PropertyField(_resourcePath, new GUIContent("Resource Path"));
+                        if (string.IsNullOrEmpty(_resourcePath.stringValue))
+                        {
+                            EditorGUILayout.HelpBox("Enter a Resources path (without 'Resources/' prefix).", MessageType.Warning);
+                        }
                     }
                     break;
 
                 case ScreenLoadType.Addressable:
-                    EditorGUILayout.PropertyField(_addressableKey, new GUIContent("Addressable Key"));
-                    if (string.IsNullOrEmpty(_addressableKey.stringValue))
+                    if (_addressableKey != null)
                     {
-                        EditorGUILayout.HelpBox("Enter an Addressables key or address.", MessageType.Warning);
+                        EditorGUILayout.PropertyField(_addressableKey, new GUIContent("Addressable Key"));
+                        if (string.IsNullOrEmpty(_addressableKey.stringValue))
+                        {
+                            EditorGUILayout.HelpBox("Enter an Addressables key or address.", MessageType.Warning);
+                        }
                     }
                     break;
             }
@@ -127,8 +143,10 @@ namespace Strada.Modules.Screen.Editor
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             EditorGUILayout.LabelField("Layer Settings", EditorStyles.miniBoldLabel);
 
-            EditorGUILayout.PropertyField(_defaultLayerIndex, new GUIContent("Default Layer"));
-            EditorGUILayout.PropertyField(_tag, new GUIContent("Screen Tag"));
+            if (_defaultLayerIndex != null)
+                EditorGUILayout.PropertyField(_defaultLayerIndex, new GUIContent("Default Layer"));
+            if (_tag != null)
+                EditorGUILayout.PropertyField(_tag, new GUIContent("Screen Tag"));
 
             EditorGUILayout.EndVertical();
             EditorGUILayout.Space(5);
@@ -136,6 +154,8 @@ namespace Strada.Modules.Screen.Editor
 
         private void DrawPoolSection()
         {
+            if (_poolable == null) return;
+
             _showPoolSettings = EditorGUILayout.BeginFoldoutHeaderGroup(_showPoolSettings, "Pooling");
 
             if (_showPoolSettings)
@@ -144,7 +164,7 @@ namespace Strada.Modules.Screen.Editor
 
                 EditorGUILayout.PropertyField(_poolable, new GUIContent("Enable Pooling"));
 
-                if (_poolable.boolValue)
+                if (_poolable.boolValue && _poolSize != null)
                 {
                     EditorGUI.indentLevel++;
                     EditorGUILayout.PropertyField(_poolSize, new GUIContent("Pool Size"));
@@ -164,6 +184,8 @@ namespace Strada.Modules.Screen.Editor
 
         private void DrawAdvancedSection()
         {
+            if (_addToHistory == null) return;
+
             _showAdvanced = EditorGUILayout.BeginFoldoutHeaderGroup(_showAdvanced, "Advanced");
 
             if (_showAdvanced)
