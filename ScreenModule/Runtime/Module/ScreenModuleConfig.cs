@@ -52,8 +52,7 @@ namespace Strada.Modules.Screen
             InitializeService(services.Get<ScreenCheckService>(), container);
             InitializeService(services.Get<ScreenHistoryService>(), container);
 
-            ScreenManager.OnManagerRegistered += manager => OnManagerRegistered(manager, container);
-            ScreenManager.OnManagerUnregistered += manager => OnManagerUnregistered(manager, container);
+            RegisterSceneManagers(configModel);
         }
 
         private void InitializeService(object service, IContainer container)
@@ -68,32 +67,47 @@ namespace Strada.Modules.Screen
             }
         }
 
-        private void OnManagerRegistered(ScreenManager manager, IContainer container)
+        private void RegisterSceneManagers(IScreenConfigModel configModel)
         {
-            var configModel = container.Resolve<IScreenConfigModel>();
+            var managers = Object.FindObjectsByType<ScreenManager>(FindObjectsSortMode.None);
 
+            foreach (var manager in managers)
+            {
+                RegisterManager(manager, configModel);
+            }
+
+            Debug.Log($"[ScreenModule] Registered {managers.Length} manager(s) from scene");
+        }
+
+        private void RegisterManager(ScreenManager manager, IScreenConfigModel configModel)
+        {
             var managerData = new ScreenManagerData(manager.ManagerId);
             managerData.Layers.AddRange(manager.Layers);
 
             configModel.RegisterManager(managerData);
 
+            int registeredCount = 0;
             foreach (var config in manager.Configs)
             {
-                if (config != null && config.ResolveType())
+                if (config == null)
+                {
+                    Debug.LogWarning("[ScreenModule] Null config in manager configs list");
+                    continue;
+                }
+
+                if (config.ResolveType())
                 {
                     configModel.RegisterConfig(manager.ManagerId, config.ScreenType, config);
+                    registeredCount++;
+                    Debug.Log($"[ScreenModule] Registered config for {config.ScreenType.Name}");
+                }
+                else
+                {
+                    Debug.LogWarning($"[ScreenModule] Failed to resolve type for config '{config.name}'. Ensure DirectPrefab has an IScreenBody component.");
                 }
             }
 
-            Debug.Log($"[ScreenModule] Manager {manager.ManagerId} registered with {manager.LayerCount} layers and {manager.Configs.Count} configs");
-        }
-
-        private void OnManagerUnregistered(ScreenManager manager, IContainer container)
-        {
-            var configModel = container.Resolve<IScreenConfigModel>();
-            configModel.UnregisterManager(manager.ManagerId);
-
-            Debug.Log($"[ScreenModule] Manager {manager.ManagerId} unregistered");
+            Debug.Log($"[ScreenModule] Manager {manager.ManagerId} registered with {manager.LayerCount} layers and {registeredCount}/{manager.Configs.Count} configs");
         }
     }
 }

@@ -99,7 +99,8 @@ namespace Strada.Modules.Screen
         #endregion
 
         /// <summary>
-        /// Resolves the screen type from the type name string.
+        /// Resolves the screen type from the prefab's IScreenBody component.
+        /// For DirectPrefab load type, uses the prefab directly (no reflection).
         /// </summary>
         /// <returns>True if type was resolved successfully.</returns>
         public bool ResolveType()
@@ -109,33 +110,21 @@ namespace Strada.Modules.Screen
 
             _typeResolved = true;
 
-            if (string.IsNullOrEmpty(screenTypeName))
+            // For DirectPrefab: get type directly from the prefab - no reflection needed
+            if (loadType == ScreenLoadType.DirectPrefab && directPrefab != null)
             {
-                if (directPrefab != null)
+                var screenBody = directPrefab.GetComponent<IScreenBody>();
+                if (screenBody != null)
                 {
-                    var screenBody = directPrefab.GetComponent<IScreenBody>();
-                    if (screenBody != null)
-                    {
-                        _resolvedScreenType = screenBody.GetType();
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            _resolvedScreenType = Type.GetType(screenTypeName);
-
-            if (_resolvedScreenType == null)
-            {
-                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-                {
-                    _resolvedScreenType = assembly.GetType(screenTypeName);
-                    if (_resolvedScreenType != null)
-                        break;
+                    _resolvedScreenType = screenBody.GetType();
+                    return true;
                 }
             }
 
-            return _resolvedScreenType != null;
+            // For Resource/Addressable: we don't have the prefab yet,
+            // so we need to defer type resolution until the prefab is loaded
+            // The caller should handle this case appropriately
+            return false;
         }
 
         /// <summary>
@@ -202,14 +191,9 @@ namespace Strada.Modules.Screen
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            if (string.IsNullOrEmpty(screenTypeName) && directPrefab != null)
-            {
-                var screenBody = directPrefab.GetComponent<IScreenBody>();
-                if (screenBody != null)
-                {
-                    screenTypeName = screenBody.GetType().AssemblyQualifiedName;
-                }
-            }
+            // Reset resolved type cache when config changes in editor
+            _typeResolved = false;
+            _resolvedScreenType = null;
         }
 #endif
     }

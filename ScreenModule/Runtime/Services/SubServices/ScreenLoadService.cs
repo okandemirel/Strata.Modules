@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Strada.Core.DI;
 using Strada.Core.DI.Attributes;
 using Strada.Core.Patterns;
 using UnityEngine;
@@ -16,6 +17,7 @@ namespace Strada.Modules.Screen
     {
         [Inject] private IScreenConfigModel _configModel;
         [Inject] private IScreenRuntimeModel _runtimeModel;
+        [Inject] private IContainer _container;
 
         private readonly Dictionary<ScreenConfig, AsyncOperationHandle<GameObject>> _addressableHandles = new();
 
@@ -83,6 +85,8 @@ namespace Strada.Modules.Screen
                 UnityEngine.Object.Destroy(instance);
                 throw new InvalidOperationException($"Loaded prefab does not have IScreenBody component: {config.name}");
             }
+
+            InjectionProcessor.Inject(screenBody, _container);
 
             var screenData = new ScreenData();
             config.CopyToData(screenData);
