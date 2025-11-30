@@ -296,9 +296,9 @@ namespace Strada.Modules.Screen
             {
                 foreach (var screen in list)
                 {
-                    if (screen?.GameObject != null)
+                    if (screen is MonoBehaviour mb && mb != null)
                     {
-                        UnityEngine.Object.Destroy(screen.GameObject);
+                        UnityEngine.Object.Destroy(mb.gameObject);
                     }
                 }
                 list.Clear();
