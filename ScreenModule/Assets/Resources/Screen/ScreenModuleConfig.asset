@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a38036a4f69034132b49bdab9eba6878, type: 3}
   m_Name: ScreenModuleConfig
   m_EditorClassIdentifier:
+  _moduleName: Screen
   _priority: 50
+  _enabled: 1

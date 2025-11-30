@@ -1,59 +1,34 @@
-using System;
 using Strada.Core.DI;
+using Strada.Core.Modules;
 using UnityEngine;
 
 namespace Strada.Modules.Screen
 {
-    /// <summary>
-    /// Module configuration for the Screen Module.
-    /// Register this in your GameBootstrapperConfig to enable screen management.
-    /// </summary>
     [CreateAssetMenu(fileName = "ScreenModuleConfig", menuName = "Strada/Modules/Screen Module Config")]
-    public class ScreenModuleConfig : ScriptableObject
+    public class ScreenModuleConfig : ModuleConfig
     {
-        [Header("Module Settings")]
-        [Tooltip("Priority for module initialization (lower = earlier)")]
-        [SerializeField] private int _priority = 50;
-
-        /// <summary>
-        /// The module name.
-        /// </summary>
-        public string ModuleName => "ScreenModule";
-
-        /// <summary>
-        /// Module initialization priority.
-        /// </summary>
-        public int Priority => _priority;
-
-        /// <summary>
-        /// Registers all screen module dependencies with the container builder.
-        /// </summary>
-        /// <param name="builder">The container builder.</param>
-        public void Install(IContainerBuilder builder)
+        protected override void Configure(IModuleBuilder builder)
         {
-            builder.Register<IScreenConfigModel, ScreenConfigModel>(Lifetime.Singleton);
-            builder.Register<IScreenRuntimeModel, ScreenRuntimeModel>(Lifetime.Singleton);
-
-            builder.Register<IScreenService, ScreenService>(Lifetime.Singleton);
-            builder.Register<IScreenBuilderService, ScreenBuilderService>(Lifetime.Singleton);
-
-            builder.Register<ScreenLoadService>(Lifetime.Singleton);
-            builder.Register<ScreenShowService>(Lifetime.Singleton);
-            builder.Register<ScreenHideService>(Lifetime.Singleton);
-            builder.Register<ScreenUnloadService>(Lifetime.Singleton);
-            builder.Register<ScreenSetupService>(Lifetime.Singleton);
-            builder.Register<ScreenCheckService>(Lifetime.Singleton);
-            builder.Register<ScreenHistoryService>(Lifetime.Singleton);
+            builder
+                .Register<IScreenConfigModel, ScreenConfigModel>()
+                .Register<IScreenRuntimeModel, ScreenRuntimeModel>()
+                .Register<IScreenService, ScreenService>()
+                .Register<IScreenBuilderService, ScreenBuilderService>()
+                .Register<ScreenLoadService>()
+                .Register<ScreenShowService>()
+                .Register<ScreenHideService>()
+                .Register<ScreenUnloadService>()
+                .Register<ScreenSetupService>()
+                .Register<ScreenCheckService>()
+                .Register<ScreenHistoryService>();
         }
 
-        /// <summary>
-        /// Initializes the screen module after container is built.
-        /// </summary>
-        /// <param name="container">The built container.</param>
-        public void Initialize(IContainer container)
+        public override void Initialize(IServiceLocator services)
         {
-            var configModel = container.Resolve<IScreenConfigModel>();
-            var runtimeModel = container.Resolve<IScreenRuntimeModel>();
+            var container = services.Get<IContainer>();
+
+            var configModel = services.Get<IScreenConfigModel>();
+            var runtimeModel = services.Get<IScreenRuntimeModel>();
 
             if (configModel is ScreenConfigModel cm)
             {
@@ -67,19 +42,15 @@ namespace Strada.Modules.Screen
                 rm.Initialize();
             }
 
-            var screenService = container.Resolve<IScreenService>();
-            var builderService = container.Resolve<IScreenBuilderService>();
-
-            InitializeService(screenService, container);
-            InitializeService(builderService, container);
-
-            InitializeService(container.Resolve<ScreenLoadService>(), container);
-            InitializeService(container.Resolve<ScreenShowService>(), container);
-            InitializeService(container.Resolve<ScreenHideService>(), container);
-            InitializeService(container.Resolve<ScreenUnloadService>(), container);
-            InitializeService(container.Resolve<ScreenSetupService>(), container);
-            InitializeService(container.Resolve<ScreenCheckService>(), container);
-            InitializeService(container.Resolve<ScreenHistoryService>(), container);
+            InitializeService(services.Get<IScreenService>(), container);
+            InitializeService(services.Get<IScreenBuilderService>(), container);
+            InitializeService(services.Get<ScreenLoadService>(), container);
+            InitializeService(services.Get<ScreenShowService>(), container);
+            InitializeService(services.Get<ScreenHideService>(), container);
+            InitializeService(services.Get<ScreenUnloadService>(), container);
+            InitializeService(services.Get<ScreenSetupService>(), container);
+            InitializeService(services.Get<ScreenCheckService>(), container);
+            InitializeService(services.Get<ScreenHistoryService>(), container);
 
             ScreenManager.OnManagerRegistered += manager => OnManagerRegistered(manager, container);
             ScreenManager.OnManagerUnregistered += manager => OnManagerUnregistered(manager, container);
