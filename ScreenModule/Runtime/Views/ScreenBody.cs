@@ -76,7 +76,7 @@ namespace Strada.Modules.Screen
                 return;
             }
 
-            _data.State |= ScreenState.InShowAnimation;
+            AddState(ScreenState.InShowAnimation);
 
             if (CustomAnimator != null)
             {
@@ -101,7 +101,7 @@ namespace Strada.Modules.Screen
                 return;
             }
 
-            _data.State |= ScreenState.InHideAnimation;
+            AddState(ScreenState.InHideAnimation);
 
             if (CustomAnimator != null)
             {
@@ -153,20 +153,14 @@ namespace Strada.Modules.Screen
 
         private void OnShowComplete()
         {
-            if (_data != null)
-            {
-                _data.State &= ~ScreenState.InShowAnimation;
-            }
+            RemoveState(ScreenState.InShowAnimation);
             OnShowAnimationComplete?.Invoke(this);
             OnScreenShown();
         }
 
         private void OnHideComplete()
         {
-            if (_data != null)
-            {
-                _data.State &= ~ScreenState.InHideAnimation;
-            }
+            RemoveState(ScreenState.InHideAnimation);
             OnHideAnimationComplete?.Invoke(this);
         }
 
@@ -198,28 +192,13 @@ namespace Strada.Modules.Screen
         #region State Management
 
         /// <inheritdoc/>
-        public bool HasState(ScreenState state)
-        {
-            return _data != null && (_data.State & state) == state;
-        }
+        public bool HasState(ScreenState state) => _data.HasState(state);
 
         /// <inheritdoc/>
-        public void AddState(ScreenState state)
-        {
-            if (_data != null)
-            {
-                _data.State |= state;
-            }
-        }
+        public void AddState(ScreenState state) => _data.AddState(state);
 
         /// <inheritdoc/>
-        public void RemoveState(ScreenState state)
-        {
-            if (_data != null)
-            {
-                _data.State &= ~state;
-            }
-        }
+        public void RemoveState(ScreenState state) => _data.RemoveState(state);
 
         #endregion
 

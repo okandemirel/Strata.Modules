@@ -17,12 +17,6 @@ namespace Strada.Modules.Screen.Editor
         private SerializedProperty _addressableKey;
         private SerializedProperty _defaultLayerIndex;
         private SerializedProperty _tag;
-        private SerializedProperty _poolable;
-        private SerializedProperty _poolSize;
-        private SerializedProperty _addToHistory;
-
-        private bool _showAdvanced = true;
-        private bool _showPoolSettings = true;
 
         private void OnEnable()
         {
@@ -33,9 +27,6 @@ namespace Strada.Modules.Screen.Editor
             _addressableKey = serializedObject.FindProperty("addressableKey");
             _defaultLayerIndex = serializedObject.FindProperty("defaultLayer");
             _tag = serializedObject.FindProperty("tag");
-            _poolable = serializedObject.FindProperty("poolable");
-            _poolSize = serializedObject.FindProperty("poolSize");
-            _addToHistory = serializedObject.FindProperty("addToHistory");
         }
 
         public override void OnInspectorGUI()
@@ -48,8 +39,6 @@ namespace Strada.Modules.Screen.Editor
             DrawScreenTypeSection(config);
             DrawLoadingSection();
             DrawLayerSection();
-            DrawPoolSection();
-            DrawAdvancedSection();
             DrawValidationMessages(config);
 
             serializedObject.ApplyModifiedProperties();
@@ -150,55 +139,6 @@ namespace Strada.Modules.Screen.Editor
 
             EditorGUILayout.EndVertical();
             EditorGUILayout.Space(5);
-        }
-
-        private void DrawPoolSection()
-        {
-            if (_poolable == null) return;
-
-            _showPoolSettings = EditorGUILayout.BeginFoldoutHeaderGroup(_showPoolSettings, "Pooling");
-
-            if (_showPoolSettings)
-            {
-                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-
-                EditorGUILayout.PropertyField(_poolable, new GUIContent("Enable Pooling"));
-
-                if (_poolable.boolValue && _poolSize != null)
-                {
-                    EditorGUI.indentLevel++;
-                    EditorGUILayout.PropertyField(_poolSize, new GUIContent("Pool Size"));
-                    if (_poolSize.intValue < 1)
-                    {
-                        _poolSize.intValue = 1;
-                    }
-                    EditorGUI.indentLevel--;
-                }
-
-                EditorGUILayout.EndVertical();
-            }
-
-            EditorGUILayout.EndFoldoutHeaderGroup();
-            EditorGUILayout.Space(5);
-        }
-
-        private void DrawAdvancedSection()
-        {
-            if (_addToHistory == null) return;
-
-            _showAdvanced = EditorGUILayout.BeginFoldoutHeaderGroup(_showAdvanced, "Advanced");
-
-            if (_showAdvanced)
-            {
-                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-
-                EditorGUILayout.PropertyField(_addToHistory, new GUIContent("Add To History",
-                    "Whether this screen should be added to navigation history when shown."));
-
-                EditorGUILayout.EndVertical();
-            }
-
-            EditorGUILayout.EndFoldoutHeaderGroup();
         }
 
         private void DrawValidationMessages(ScreenConfig config)

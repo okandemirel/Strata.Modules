@@ -31,7 +31,6 @@ namespace Strada.Modules.Screen
             var managerId = screenData.ManagerId;
             var screenType = screenData.ScreenType;
             var layerIndex = screenData.LayerIndex;
-            var forceOpen = true;
 
             var config = _configModel.GetConfig(managerId, screenType);
             if (config == null)
