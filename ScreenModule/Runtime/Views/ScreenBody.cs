@@ -10,6 +10,9 @@ namespace Strada.Modules.Screen
     [RequireComponent(typeof(RectTransform))]
     public abstract class ScreenBody : MonoBehaviour, IScreenBody
     {
+        private static readonly int ShowTriggerHash = Animator.StringToHash("Show");
+        private static readonly int HideTriggerHash = Animator.StringToHash("Hide");
+
         [Header("Animation")]
         [Tooltip("Optional Unity Animator for animations")]
         [SerializeField] private Animator animator;
@@ -81,7 +84,7 @@ namespace Strada.Modules.Screen
             }
             else if (animator != null)
             {
-                animator.SetTrigger("Show");
+                animator.SetTrigger(ShowTriggerHash);
             }
             else
             {
@@ -106,7 +109,7 @@ namespace Strada.Modules.Screen
             }
             else if (animator != null)
             {
-                animator.SetTrigger("Hide");
+                animator.SetTrigger(HideTriggerHash);
             }
             else
             {

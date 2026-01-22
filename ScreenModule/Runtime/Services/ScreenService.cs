@@ -6,8 +6,23 @@ using Strada.Core.Patterns;
 namespace Strada.Modules.Screen
 {
     /// <summary>
-    /// Service for managing screens.
+    /// Unified facade service for managing screens in the application.
+    /// Provides a clean API for screen navigation, history management, and lifecycle operations.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// ScreenService acts as the main entry point for all screen-related operations. It delegates
+    /// to specialized sub-services for loading, showing, hiding, and unloading screens.
+    /// </para>
+    /// <para>
+    /// Common usage patterns:
+    /// <list type="bullet">
+    /// <item><description>Opening a screen: <c>await screenService.Open&lt;MainMenuScreen&gt;().ShowAsync();</c></description></item>
+    /// <item><description>Going back in history: <c>await screenService.GoBackAsync();</c></description></item>
+    /// <item><description>Hiding a screen: <c>await screenService.HideAsync(screen);</c></description></item>
+    /// </list>
+    /// </para>
+    /// </remarks>
     public class ScreenService : Service, IScreenService
     {
         [Inject] private IScreenBuilderService _builder;
